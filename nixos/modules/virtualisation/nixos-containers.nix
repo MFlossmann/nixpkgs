@@ -311,6 +311,14 @@ let
         type = types.bool;
         description = "Determine whether the mounted path will be accessed in read-only mode.";
       };
+      mountOptions = mkOption {
+        default = true;
+        type = types.nullOr types.str;
+        description = ''
+          Mount options for the bind.
+          See the section "Mount Options" in [systemd-nspawn(1)](https://man7.org/linux/man-pages/man1/systemd-nspawn.1.html)
+          for further information.'';
+      };
     };
 
     config = {
@@ -341,7 +349,9 @@ let
 
   mkBindFlag = d:
                let flagPrefix = if d.isReadOnly then " --bind-ro=" else " --bind=";
-                   mountstr = if d.hostPath != null then "${d.hostPath}:${d.mountPoint}" else "${d.mountPoint}";
+                   mountstr = if d.hostPath != null then (
+                     if d.idMapping != null then "${d.hostPath}:${d.mountPoint}:${d.idMapping}" else "${d.hostPath}:${d.mountPoint}")
+                  else "${d.mountPoint}";
                in flagPrefix + mountstr ;
 
   mkBindFlags = bs: concatMapStrings mkBindFlag (lib.attrValues bs);
