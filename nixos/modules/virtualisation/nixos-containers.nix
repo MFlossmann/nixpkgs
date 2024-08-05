@@ -350,7 +350,7 @@ let
   mkBindFlag = d:
                let flagPrefix = if d.isReadOnly then " --bind-ro=" else " --bind=";
                    mountstr = if d.hostPath != null then (
-                     if d.idMapping != null then "${d.hostPath}:${d.mountPoint}:${d.idMapping}" else "${d.hostPath}:${d.mountPoint}")
+                     if d.mountOptions != null then "${d.hostPath}:${d.mountPoint}:${d.mountOptions}" else "${d.hostPath}:${d.mountPoint}")
                   else "${d.mountPoint}";
                in flagPrefix + mountstr ;
 
